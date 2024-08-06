@@ -10,7 +10,7 @@ const Navbar = () => {
     <nav className='navbar'>
       <div className='container container-lg'>
         <div className='logo'>
-          <Link to="/">scent.com</Link>
+          <Link to="/">Scent.com</Link>
         </div>
         <div className='search-container'>
           <form>
