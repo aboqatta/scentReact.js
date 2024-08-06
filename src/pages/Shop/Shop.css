@@ -1,0 +1,123 @@
+.products-section {
+    padding: 0 20px; 
+}
+
+.product-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+    width: calc(25% - 20px); /* Four cards per row on larger screens */
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 0 auto;
+}
+
+.rating {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.rating svg {
+    font-size: 1em;
+}
+
+.add-to-cart {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+    color: #fff;
+    background-color: #333;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.add-to-cart:hover {
+    background-color: #555;
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .product-card {
+        width: calc(33.333% - 20px); /* Three cards per row on tablets */
+    }
+}
+
+@media (max-width: 480px) {
+    .product-card {
+        width: calc(100% - 20px); /* One card per row on phones */
+    }
+}
+
+.no-products {
+    text-align: center;
+    font-size: 1.2em;
+    color: #888;
+    margin-top: 20px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 30px 0;
+    margin: 20px 0;
+}
+
+.page-item {
+    margin: 0 5px;
+}
+
+.page-link {
+    text-decoration: none;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #864a09c8;
+    background-color: #fff;
+}
+
+.page-item.active .page-link {
+    background-color: #864a09c8;
+    color: #fff;
+}
+
+.page-link:hover {
+    background-color: goldenrod;
+}
+
+.page-item.disabled .page-link {
+    pointer-events: none;
+    color: #ccc;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+}
+
+
+/* .no-items-found {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+    margin-top: 20px;
+} */

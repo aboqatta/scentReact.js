@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar/Navbar";
+import Footer from "./components/Footer/Footer";
+import Home from "./pages/Home/Home";
+import Shop from "./pages/Shop/Shop";
+import Cart from "./pages/Cart/Cart";
+import { ToastContainer } from 'react-toastify'; 
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [selectedCategory, setSelectedCategory] = useState('All');
+
+    return (
+        <BrowserRouter>
+            <Navbar />
+            <Routes>
+                <Route
+                    path="/"
+                    element={<Home setSelectedCategory={setSelectedCategory} />}
+                />
+                <Route
+                    path="/shop"
+                    element={<Shop selectedCategory={selectedCategory} />}
+                />
+                <Route path="/cart" element={<Cart />} />
+            </Routes>
+            <Footer />
+            <ToastContainer />
+        </BrowserRouter>
+    );
 }
 
 export default App;

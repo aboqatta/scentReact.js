@@ -1,0 +1,138 @@
+footer {
+  background-color: #f8f9fa;
+  padding: 1rem 0.5rem;
+  color: #333;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-container {
+  width: 80%;
+  max-width: 1200px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.footer-section {
+  flex: 1 1 200px;
+  margin: 0.5rem;
+}
+
+.footer-section h3, 
+.footer-section h4 {
+  margin-bottom: 0.5rem;
+}
+
+.footer-section p {
+  line-height: 1.4;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 0.4rem;
+}
+
+.footer-section a,
+.social-icons a {
+  text-decoration: none;
+  color: #864a09c8;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-section a:hover,
+.social-icons a:hover,
+.legal-links a:hover {
+  color: gold;
+  transform: scale(1.05);
+}
+
+.social-icons {
+  margin-bottom: 0.5rem;
+}
+
+.social-icons a {
+  margin-right: 0.4rem;
+  font-size: 1.4rem;
+}
+
+.subscribe-form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.subscribe-form input {
+  flex: 1;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.subscribe-form button {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  background-color: #864a09c8;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 0.4rem;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.subscribe-form button:hover {
+  background-color: gold;
+  color: #333;
+  transform: scale(1.05);
+}
+
+.copyright-section {
+  text-align: center;
+  flex: 1 1 100%;
+  margin-top: 0.5rem;
+}
+
+.copyright-section p {
+  margin-bottom: 0.4rem;
+}
+
+.legal-links {
+  display: flex;
+  justify-content: center;
+}
+
+.legal-links a {
+  margin: 0 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    width: 90%;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    justify-content: center;
+  }
+
+  .footer-section {
+    margin: 0;
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+
+  .subscribe-form {
+    flex-direction: column;
+  }
+
+  .subscribe-form button {
+    margin-left: 0;
+    margin-top: 0.4rem;
+  }
+}
+
+.bold-gold {
+  font-weight: bold;
+  color: gold;
+}
