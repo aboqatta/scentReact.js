@@ -1,7 +1,9 @@
+// src/pages/Home.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import headerImage from '../../assets/images/header22.jpg';
-import { setProducts, setCategories } from "../../redux/productSlice";
+import axios from 'axios';
+import headerImage from '../../assets/staticImages/header22.jpg';
+import { fetchProducts, fetchCategories } from "../../redux/productSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import './Home.css';
@@ -10,35 +12,23 @@ const Home = () => {
     const dispatch = useDispatch();
     const products = useSelector(state => state.product.products);
     const categories = useSelector(state => state.product.categories);
-    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 10;
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const productsResponse = await fetch('http://localhost:3000/products');
-                const productsData = await productsResponse.json();
-                dispatch(setProducts(productsData));
+        dispatch(fetchProducts(selectedCategoryId));
+        dispatch(fetchCategories());
+    }, [dispatch, selectedCategoryId]);
 
-                const categoriesResponse = await fetch('http://localhost:3000/categories');
-                const categoriesData = await categoriesResponse.json();
-                dispatch(setCategories(categoriesData));
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-        fetchData();
-    }, [dispatch]);
-
-    const handleCategoryClick = (category) => {
-        setSelectedCategory(category);
+    const handleCategoryClick = (categoryId) => {
+        setSelectedCategoryId(categoryId);
         setCurrentPage(1);
     };
 
-    const filteredProducts = selectedCategory === 'All'
-        ? products
-        : products.filter(product => product.category === selectedCategory);
+    const filteredProducts = selectedCategoryId === null
+    ? products
+    : products.filter(product => product.categoryId === selectedCategoryId);
 
     const lastIndex = currentPage * recordsPerPage;
     const firstIndex = lastIndex - recordsPerPage;
@@ -72,24 +62,22 @@ const Home = () => {
                 </div>
             </div>
             <div className="products-section">
-                <h2 className="products-title">Top Products</h2>
-                <div className="products-grid">
-                    {products.slice(0, 4).map((product, index) => (
-                        <ProductCard key={index} product={product} />
-                    ))}
-                </div>
-            </div>
-            <div className="products-section">
                 <div className="categories">
                     <div className="categories-title">SHOP BY CATEGORY</div>
                     <ul className="categories-list">
-                        {['All', ...categories.map(cat => cat.name)].map((category, index) => (
+                        <li
+                            className={`category-item ${selectedCategoryId === null ? 'active' : ''}`}
+                            onClick={() => handleCategoryClick(null)}
+                        >
+                            All
+                        </li>
+                        {categories.map(cat => (
                             <li
-                                key={index}
-                                className={`category-item ${category === selectedCategory ? 'active' : ''}`}
-                                onClick={() => handleCategoryClick(category)}
+                                key={cat.id}
+                                className={`category-item ${cat.id === selectedCategoryId ? 'active' : ''}`}
+                                onClick={() => handleCategoryClick(cat.id)}
                             >
-                                {category}
+                                {cat.name}
                             </li>
                         ))}
                     </ul>

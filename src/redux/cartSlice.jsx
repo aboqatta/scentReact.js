@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 // Helper function to get cart from localStorage
 const getCartFromLocalStorage = () => {
@@ -18,25 +19,25 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart(state, action) {
-      const newItem = action.payload;
-      const existingItem = state.products.find((item) => item.id === newItem.id);
+      // Ensure you handle the full product object correctly
+      const product = action.payload;
+      const existingItem = state.products.find(item => item.id === product.id);
       if (existingItem) {
         existingItem.quantity++;
-        existingItem.totalPrice += newItem.price;
+        existingItem.totalPrice += existingItem.price;
       } else {
         state.products.push({
-          id: newItem.id,
-          name: newItem.name,
-          price: newItem.price,
+          id: product.id,
+          name: product.name,
+          price: product.price,
           quantity: 1,
-          totalPrice: newItem.price,
-          image: newItem.image
+          totalPrice: product.price,
+          image: product.image
         });
       }
-      state.totalPrice += newItem.price;
-      state.totalQuantity = state.products.reduce((total, item) => total + item.quantity, 0);
 
-      saveCartToLocalStorage(state); 
+      state.totalPrice += product.price;
+      state.totalQuantity = state.products.reduce((total, item) => total + item.quantity, 0);
     },
     removeFromCart(state, action) {
       const id = action.payload;
@@ -46,7 +47,7 @@ const cartSlice = createSlice({
         state.totalQuantity -= findItem.quantity;
         state.products = state.products.filter(item => item.id !== id);
         state.totalQuantity = state.products.reduce((total, item) => total + item.quantity, 0);
-        saveCartToLocalStorage(state); 
+        saveCartToLocalStorage(state);
       }
     },
     increaseQuantity(state, action) {
@@ -68,11 +69,47 @@ const cartSlice = createSlice({
         findItem.totalPrice -= findItem.price;
         state.totalQuantity--;
         state.totalPrice -= findItem.price;
-        saveCartToLocalStorage(state); 
+        saveCartToLocalStorage(state);
       }
     }
   }
 });
 
-export const { addToCart, removeFromCart, increaseQuantity, decreaseQuantity } = cartSlice.actions;
+// Async actions with Axios
+export const addToCart = (product) => async (dispatch) => {
+  try {
+    await axios.post(`https://localhost:7256/api/cart/addtocart?productId=${product.id}`);
+    dispatch(cartSlice.actions.addToCart(product));
+  } catch (error) {
+    console.error('Failed to add product to cart:', error);
+  }
+};
+
+export const removeFromCart = (productId) => async (dispatch) => {
+  try {
+    await axios.post(`https://localhost:7256/api/cart/removefromcart?productId=${productId}`);
+    dispatch(cartSlice.actions.removeFromCart(productId));
+  } catch (error) {
+    console.error('Failed to remove product from cart:', error);
+  }
+};
+
+export const increaseQuantity = (productId) => async (dispatch) => {
+  try {
+    await axios.post(`https://localhost:7256/api/cart/increasequantity?productId=${productId}`);
+    dispatch(cartSlice.actions.increaseQuantity(productId));
+  } catch (error) {
+    console.error('Failed to increase product quantity:', error);
+  }
+};
+
+export const decreaseQuantity = (productId) => async (dispatch) => {
+  try {
+    await axios.post(`https://localhost:7256/api/cart/decreasequantity?productId=${productId}`);
+    dispatch(cartSlice.actions.decreaseQuantity(productId));
+  } catch (error) {
+    console.error('Failed to decrease product quantity:', error);
+  }
+};
+
 export default cartSlice.reducer;

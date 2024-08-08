@@ -15,8 +15,9 @@
 }
 
 .categories-title {
+  margin-top: 25px;
   font-size: 1.5em;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
   font-weight: bold;
   color: #333;
 }
@@ -122,7 +123,7 @@
 
 .products-title {
   text-align: center;
-  margin: 20px 0;
+  margin: 30px 0;
   font-size: 2em;
 }
 

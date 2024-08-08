@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import EmptyCart from '../../assets/images/emptyCart.png';
+import EmptyCart from '../../assets/staticImages/emptyCart.png';
 import { FaTrashAlt } from 'react-icons/fa';
 import './Cart.css';
 import { decreaseQuantity, increaseQuantity, removeFromCart } from '../../redux/cartSlice';
@@ -8,22 +8,37 @@ import { toast } from 'react-toastify';
 
 const Cart = () => {
   const cart = useSelector(state => state.cart);
-  const [address, setAddress] = useState('main street, 0012');
+  const [address] = useState('main street, 0012');
   const dispatch = useDispatch();
 
-  const handleDecreaseQuantity = (productId) => {
-    dispatch(decreaseQuantity(productId));
-    toast.info("Quantity decreased!");
+  const handleDecreaseQuantity = async (productId) => {
+    try {
+      await dispatch(decreaseQuantity(productId));
+      toast.info("Quantity decreased!");
+    } catch (error) {
+      toast.error("Failed to decrease quantity.");
+      console.error(error);
+    }
   };
 
-  const handleIncreaseQuantity = (productId) => {
-    dispatch(increaseQuantity(productId));
-    toast.info("Quantity increased!");
+  const handleIncreaseQuantity = async (productId) => {
+    try {
+      await dispatch(increaseQuantity(productId));
+      toast.info("Quantity increased!");
+    } catch (error) {
+      toast.error("Failed to increase quantity.");
+      console.error(error);
+    }
   };
 
-  const handleRemoveFromCart = (productId) => {
-    dispatch(removeFromCart(productId));
-    toast.error("Product removed from cart!");
+  const handleRemoveFromCart = async (productId) => {
+    try {
+      await dispatch(removeFromCart(productId));
+      toast.error("Product removed from cart!");
+    } catch (error) {
+      toast.error("Failed to remove product from cart.");
+      console.error(error);
+    }
   };
 
   return (
@@ -43,12 +58,11 @@ const Cart = () => {
             </div>
             <div className="cart-products">
               {cart.products.map((product) => {
-                // Handle dynamic image imports
-                const productImage = require(`../../assets/images/${product.image}`);
+                const productImage = `${product.image}`; // Ensure this path is correct
                 return (
                   <div key={product.id} className="cart-product">
                     <div className="cart-product-info">
-                      <img src={productImage} alt="product" className="product-image" />
+                      <img src={productImage} alt={product.name} className="product-image" />
                       <div>
                         <h3>{product.name}</h3>
                       </div>

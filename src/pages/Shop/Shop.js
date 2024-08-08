@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+// src/pages/Shop.js
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchProducts } from '../../redux/productSlice';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import './Shop.css';
 
-const Shop = ({ selectedCategory }) => {
+const Shop = ({ selectedCategoryId }) => {
+    const dispatch = useDispatch();
     const products = useSelector(state => state.product.products);
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 12;
 
-    const filteredProducts = selectedCategory === 'All'
-        ? products
-        : products.filter(product => product.category === selectedCategory);
+    useEffect(() => {
+        const fetchProductsByCategory = async () => {
+            try {
+                await dispatch(fetchProducts(selectedCategoryId)).unwrap();
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+        fetchProductsByCategory();
+    }, [dispatch, selectedCategoryId]);
 
     const lastIndex = currentPage * recordsPerPage;
     const firstIndex = lastIndex - recordsPerPage;
-    const records = filteredProducts.slice(firstIndex, lastIndex);
-    const nPage = Math.ceil(filteredProducts.length / recordsPerPage);
+    const records = products.slice(firstIndex, lastIndex);
+    const nPage = Math.ceil(products.length / recordsPerPage);
     const numbers = [...Array(nPage).keys()].map(n => n + 1);
 
     const nextPage = () => {
@@ -34,12 +44,9 @@ const Shop = ({ selectedCategory }) => {
         setCurrentPage(id);
     };
 
-    console.log("Current Page:", currentPage);
-    console.log("Number of Pages:", nPage);
-
     return (
         <div className="products-section">
-            <h2 className="products-title">{selectedCategory} Products</h2>
+            <h2 className="products-title">{selectedCategoryId ? `Category ${selectedCategoryId} Products` : 'All Products'}</h2>
             <div className="products-grid">
                 {records.map((product, index) => (
                     <ProductCard key={index} product={product} />
