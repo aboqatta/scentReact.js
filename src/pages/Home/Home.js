@@ -1,12 +1,10 @@
-// src/pages/Home.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import headerImage from '../../assets/staticImages/header22.jpg';
-import { fetchProducts, fetchCategories } from "../../redux/productSlice";
 import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts, fetchCategories } from "../../redux/productSlice";
 import ProductCard from '../../components/ProductCard/ProductCard';
 import './Home.css';
+import headerImage from '../../assets/staticImages/header22.jpg';
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -27,35 +25,23 @@ const Home = () => {
     };
 
     const filteredProducts = selectedCategoryId === null
-    ? products
-    : products.filter(product => product.categoryId === selectedCategoryId);
+        ? products
+        : products.filter(product => product.categoryId === selectedCategoryId);
 
     const lastIndex = currentPage * recordsPerPage;
     const firstIndex = lastIndex - recordsPerPage;
     const records = filteredProducts.slice(firstIndex, lastIndex);
     const nPage = Math.ceil(filteredProducts.length / recordsPerPage);
-    const numbers = [...Array(nPage).keys()].map(n => n + 1);
+    const numbers = Array.from({ length: nPage }, (_, i) => i + 1);
 
-    const nextPage = () => {
-        if (currentPage < nPage) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const prePage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const changeCPage = (id) => {
-        setCurrentPage(id);
-    };
+    const nextPage = () => currentPage < nPage && setCurrentPage(currentPage + 1);
+    const prePage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+    const changeCPage = (id) => setCurrentPage(id);
 
     return (
         <div className="home-container">
             <div className="header">
-                <img src={headerImage} alt="Header Image" className="header-image"/>
+                <img src={headerImage} alt="Header" className="header-image" />
                 <div className="header-content">
                     <h2>WELCOME TO scent.com</h2>
                     <Link to="/shop" className="shop-button">SHOP NOW</Link>
@@ -84,25 +70,23 @@ const Home = () => {
                 </div>
                 <h2 className="products-title">Choose your scent</h2>
                 <div className="products-grid">
-                    {records.map((product, index) => (
-                        <ProductCard key={index} product={product} />
+                    {records.map(product => (
+                        <ProductCard key={product.id} product={product} />
                     ))}
                 </div>
-                <div>
-                    <ul className='pagination'>
-                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                            <a href='#' className='page-link' onClick={(e) => { e.preventDefault(); prePage(); }}>Prev</a>
+                <ul className='pagination'>
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button className='page-link' onClick={prePage}>Prev</button>
+                    </li>
+                    {numbers.map(n => (
+                        <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={n}>
+                            <button className='page-link' onClick={() => changeCPage(n)}>{n}</button>
                         </li>
-                        {numbers.map((n, i) => (
-                            <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
-                                <a href='#' className='page-link' onClick={(e) => { e.preventDefault(); changeCPage(n); }}>{n}</a>
-                            </li>
-                        ))}
-                        <li className={`page-item ${currentPage === nPage ? 'disabled' : ''}`}>
-                            <a href='#' className='page-link' onClick={(e) => { e.preventDefault(); nextPage(); }}>Next</a>
-                        </li>
-                    </ul>
-                </div>
+                    ))}
+                    <li className={`page-item ${currentPage === nPage ? 'disabled' : ''}`}>
+                        <button className='page-link' onClick={nextPage}>Next</button>
+                    </li>
+                </ul>
             </div>
         </div>
     );

@@ -1,44 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import EmptyCart from '../../assets/staticImages/emptyCart.png';
 import { FaTrashAlt } from 'react-icons/fa';
 import './Cart.css';
-import { decreaseQuantity, increaseQuantity, removeFromCart } from '../../redux/cartSlice';
+import { asyncDecreaseQuantity, asyncIncreaseQuantity, asyncRemoveFromCart, asyncSetCart } from '../../redux/cartSlice';
 import { toast } from 'react-toastify';
 
 const Cart = () => {
   const cart = useSelector(state => state.cart);
-  const [address] = useState('main street, 0012');
   const dispatch = useDispatch();
 
-  const handleDecreaseQuantity = async (productId) => {
+  const fetchCart = async () => {
     try {
-      await dispatch(decreaseQuantity(productId));
-      toast.info("Quantity decreased!");
+      const { data } = await axios.get('https://localhost:7256/api/cart/cartitems');
+      dispatch(asyncSetCart(data));
     } catch (error) {
-      toast.error("Failed to decrease quantity.");
-      console.error(error);
+      console.error('Failed to fetch cart:', error);
     }
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, [dispatch]);
+
+  const handleDecreaseQuantity = async (productId) => {
+    await dispatch(asyncDecreaseQuantity(productId));
+    await fetchCart();
+    toast.info("Quantity decreased!");
   };
 
   const handleIncreaseQuantity = async (productId) => {
-    try {
-      await dispatch(increaseQuantity(productId));
-      toast.info("Quantity increased!");
-    } catch (error) {
-      toast.error("Failed to increase quantity.");
-      console.error(error);
-    }
+    await dispatch(asyncIncreaseQuantity(productId));
+    await fetchCart();
+    toast.info("Quantity increased!");
   };
 
   const handleRemoveFromCart = async (productId) => {
-    try {
-      await dispatch(removeFromCart(productId));
-      toast.error("Product removed from cart!");
-    } catch (error) {
-      toast.error("Failed to remove product from cart.");
-      console.error(error);
-    }
+    await dispatch(asyncRemoveFromCart(productId));
+    await fetchCart();
+    toast.error("Product removed from cart!");
   };
 
   return (
@@ -57,36 +58,33 @@ const Cart = () => {
               </div>
             </div>
             <div className="cart-products">
-              {cart.products.map((product) => {
-                const productImage = `${product.image}`; // Ensure this path is correct
-                return (
-                  <div key={product.id} className="cart-product">
-                    <div className="cart-product-info">
-                      <img src={productImage} alt={product.name} className="product-image" />
-                      <div>
-                        <h3>{product.name}</h3>
-                      </div>
-                    </div>
-                    <div className="cart-product-details">
-                      <p>${product.price}</p>
-                      <div className="quantity-controls">
-                        <button 
-                          onClick={() => handleDecreaseQuantity(product.id)} 
-                          disabled={product.quantity === 1}
-                        >
-                          -
-                        </button>
-                        <p>{product.quantity}</p>
-                        <button onClick={() => handleIncreaseQuantity(product.id)}>+</button>
-                      </div>
-                      <p>${(product.quantity * product.price).toFixed(2)}</p>
-                      <button className="remove-button" onClick={() => handleRemoveFromCart(product.id)}>
-                        <FaTrashAlt />
-                      </button>
+              {cart.products.map(product => (
+                <div key={product.id} className="cart-product">
+                  <div className="cart-product-info">
+                    <img src={product.image} alt={product.name} className="product-image" />
+                    <div>
+                      <h3>{product.name}</h3>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="cart-product-details">
+                    <p>${product.price}</p>
+                    <div className="quantity-controls">
+                      <button 
+                        onClick={() => handleDecreaseQuantity(product.id)} 
+                        disabled={product.quantity === 1}
+                      >
+                        -
+                      </button>
+                      <p>{product.quantity}</p>
+                      <button onClick={() => handleIncreaseQuantity(product.id)}>+</button>
+                    </div>
+                    <p>${(product.quantity * product.price).toFixed(2)}</p>
+                    <button className="remove-button" onClick={() => handleRemoveFromCart(product.id)}>
+                      <FaTrashAlt />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
             <div className="cart-summary">
               <h3>CART TOTAL</h3>
@@ -96,17 +94,15 @@ const Cart = () => {
               </div>
               <div className="summary-item">
                 <p>Shipping:</p>
+                {/* Add shipping cost if needed */}
               </div>
-              <div className="summary-item">
-                <p>Shipping to:</p>
-                <span className="summary-value">{address}</span>
-              </div>
-              <button className="change-address-button not-allowed">Change Address</button>
               <div className="summary-item">
                 <span>Total Price:</span>
                 <span className="summary-value">${cart.totalPrice.toFixed(2)}</span>
               </div>
-              <button className="checkout-button not-allowed">Proceed to Checkout</button>
+              <button className="checkout-button" onClick={() => {/* Implement checkout functionality */}}>
+                Proceed to Checkout
+              </button>
             </div>
           </div>
         </div>

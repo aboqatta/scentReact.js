@@ -1,4 +1,3 @@
-// src/pages/Shop.js
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '../../redux/productSlice';
@@ -12,61 +11,39 @@ const Shop = ({ selectedCategoryId }) => {
     const recordsPerPage = 12;
 
     useEffect(() => {
-        const fetchProductsByCategory = async () => {
-            try {
-                await dispatch(fetchProducts(selectedCategoryId)).unwrap();
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
-        };
-        fetchProductsByCategory();
+        dispatch(fetchProducts(selectedCategoryId));
     }, [dispatch, selectedCategoryId]);
 
     const lastIndex = currentPage * recordsPerPage;
     const firstIndex = lastIndex - recordsPerPage;
     const records = products.slice(firstIndex, lastIndex);
     const nPage = Math.ceil(products.length / recordsPerPage);
-    const numbers = [...Array(nPage).keys()].map(n => n + 1);
 
-    const nextPage = () => {
-        if (currentPage < nPage) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const prePage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const changeCPage = (id) => {
-        setCurrentPage(id);
-    };
+    const handlePageChange = (page) => setCurrentPage(page);
 
     return (
         <div className="products-section">
-            <h2 className="products-title">{selectedCategoryId ? `Category ${selectedCategoryId} Products` : 'All Products'}</h2>
+            <h2 className="products-title">
+                {selectedCategoryId ? `Category ${selectedCategoryId} Products` : 'All Products'}
+            </h2>
             <div className="products-grid">
-                {records.map((product, index) => (
-                    <ProductCard key={index} product={product} />
+                {records.map((product) => (
+                    <ProductCard key={product.id} product={product} />
                 ))}
             </div>
-            <div>
-                <ul className='pagination'>
-                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                        <a href='#' className='page-link' onClick={(e) => { e.preventDefault(); prePage(); }}>Prev</a>
+            <ul className='pagination'>
+                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                    <button className='page-link' onClick={() => handlePageChange(currentPage - 1)}>Prev</button>
+                </li>
+                {[...Array(nPage).keys()].map(n => (
+                    <li className={`page-item ${currentPage === n + 1 ? 'active' : ''}`} key={n}>
+                        <button className='page-link' onClick={() => handlePageChange(n + 1)}>{n + 1}</button>
                     </li>
-                    {numbers.map((n, i) => (
-                        <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
-                            <a href='#' className='page-link' onClick={(e) => { e.preventDefault(); changeCPage(n); }}>{n}</a>
-                        </li>
-                    ))}
-                    <li className={`page-item ${currentPage === nPage ? 'disabled' : ''}`}>
-                        <a href='#' className='page-link' onClick={(e) => { e.preventDefault(); nextPage(); }}>Next</a>
-                    </li>
-                </ul>
-            </div>
+                ))}
+                <li className={`page-item ${currentPage === nPage ? 'disabled' : ''}`}>
+                    <button className='page-link' onClick={() => handlePageChange(currentPage + 1)}>Next</button>
+                </li>
+            </ul>
         </div>
     );
 };

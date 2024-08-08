@@ -11,20 +11,19 @@ import axios from 'axios';
 const ProductCard = ({ product }) => {
     const dispatch = useDispatch();
 
-    const handleAddToCart = async (e, product) => {
+    const handleAddToCart = async (e) => {
         e.stopPropagation();
         e.preventDefault();
-        const productId = product.id; // Extracting productId
 
         try {
-            const response = await axios.post(`https://localhost:7256/api/cart/addtocart?productId=${productId}`, null, {
+            const response = await axios.post(`https://localhost:7256/api/cart/addtocart?productId=${product.id}`, null, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
 
             if (response.status === 200) {
-                dispatch(addToCart(product)); // Passing the whole product to the Redux action
+                dispatch(addToCart(product));
                 toast.success("Product Added Successfully!");
             } else {
                 throw new Error('Failed to add product.');
@@ -39,15 +38,15 @@ const ProductCard = ({ product }) => {
 
     return (
         <div className="product-card">
-            <img src={imagePath} alt={product.name} className="product-image" onError={(e) => e.target.src = '/path/to/fallback/image.png'} />
+            <img src={imagePath} alt={product.name} className="product-image" />
             <h3>{product.name}</h3>
-            <p>${product.price}</p> 
+            <p>${product.price}</p>
             <div className="rating">
                 {[...Array(5)].map((_, index) => (
                     <FontAwesomeIcon key={index} icon={faStar} color="gold" />
                 ))}
             </div>
-            <div className="add-to-cart" onClick={(e) => handleAddToCart(e, product)}>
+            <div className="add-to-cart" onClick={handleAddToCart}>
                 <span>+</span>
                 <span>Add to cart</span>
             </div>

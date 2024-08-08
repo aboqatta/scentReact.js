@@ -17,7 +17,6 @@ export const fetchCategories = createAsyncThunk('product/fetchCategories', async
 
 const initialState = {
     products: [],
-    topProducts: [],  // Added for top products
     categories: [],
     status: 'idle',
     error: null
@@ -26,11 +25,7 @@ const initialState = {
 const productSlice = createSlice({
     name: 'product',
     initialState,
-    reducers: {
-        setTopProducts: (state, action) => {
-            state.topProducts = action.payload;
-        }
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(fetchProducts.pending, (state) => {
@@ -39,8 +34,6 @@ const productSlice = createSlice({
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.products = action.payload;
-                // Set top products as the first 4 products
-                state.topProducts = action.payload.slice(0, 4);
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.status = 'failed';
@@ -60,5 +53,4 @@ const productSlice = createSlice({
     }
 });
 
-export const { setTopProducts } = productSlice.actions;
 export default productSlice.reducer;
