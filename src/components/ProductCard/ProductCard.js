@@ -2,32 +2,18 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import './ProductCard.css';
-import { addToCart } from '../../redux/cartSlice';
+import { asyncAddToCart } from '../../redux/cartSlice'; // Import asyncAddToCart
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 
 const ProductCard = ({ product }) => {
     const dispatch = useDispatch();
 
-    const handleAddToCart = async (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-
+    const handleAddToCart = async () => {
         try {
-            const response = await axios.post(`https://localhost:7256/api/cart/addtocart?productId=${product.id}`, null, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.status === 200) {
-                dispatch(addToCart(product));
-                toast.success("Product Added Successfully!");
-            } else {
-                throw new Error('Failed to add product.');
-            }
+            await dispatch(asyncAddToCart(product));
+            toast.success("Product Added Successfully!");
         } catch (error) {
             console.error('Error adding product:', error);
             toast.error('Failed to add product.');

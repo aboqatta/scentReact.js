@@ -73,9 +73,9 @@ const cartSlice = createSlice({
 
 export const { addToCart, removeFromCart, increaseQuantity, decreaseQuantity, setCart } = cartSlice.actions;
 
-const handleRequest = async (url, dispatch, action) => {
+const handleRequest = async (url, dispatch, action, method = 'POST') => {
   try {
-    await axios.post(url);
+    await axios({ method, url });
     dispatch(action());
   } catch (error) {
     console.error(`Failed to process request: ${error.message}`);
@@ -87,7 +87,7 @@ export const asyncAddToCart = (product) => async (dispatch) => {
 };
 
 export const asyncRemoveFromCart = (productId) => async (dispatch) => {
-  handleRequest(`https://localhost:7256/api/cart/removefromcart?productId=${productId}`, dispatch, () => removeFromCart(productId));
+  handleRequest(`https://localhost:7256/api/cart/removefromcart?productId=${productId}`, dispatch, () => removeFromCart(productId), 'DELETE');
 };
 
 export const asyncIncreaseQuantity = (productId) => async (dispatch) => {

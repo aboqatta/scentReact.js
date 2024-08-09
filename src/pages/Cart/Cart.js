@@ -19,6 +19,7 @@ const Cart = () => {
       console.error('Failed to fetch cart:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchCart();
@@ -37,6 +38,7 @@ const Cart = () => {
   };
 
   const handleRemoveFromCart = async (productId) => {
+    console.log('Removing product with id:', productId);
     await dispatch(asyncRemoveFromCart(productId));
     await fetchCart();
     toast.error("Product removed from cart!");

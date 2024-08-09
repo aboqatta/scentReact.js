@@ -5,7 +5,7 @@ import './Navbar.css';
 import { useSelector } from 'react-redux';
 
 const Navbar = () => {
-  const products = useSelector(state => state.cart.products);
+  const products = useSelector(state => state.cart.products|| []);
   return (
     <nav className='navbar'>
       <div className='container container-lg'>
