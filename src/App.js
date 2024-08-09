@@ -6,6 +6,7 @@ import Home from "./pages/Home/Home";
 import Shop from "./pages/Shop/Shop";
 import Cart from "./pages/Cart/Cart";
 import { ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
     const [selectedCategory, setSelectedCategory] = useState('All');

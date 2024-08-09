@@ -2,10 +2,9 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import './ProductCard.css';
-import { asyncAddToCart } from '../../redux/cartSlice'; // Import asyncAddToCart
+import { asyncAddToCart } from '../../redux/cartSlice'; 
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const ProductCard = ({ product }) => {
     const dispatch = useDispatch();
@@ -13,12 +12,19 @@ const ProductCard = ({ product }) => {
     const handleAddToCart = async () => {
         try {
             await dispatch(asyncAddToCart(product));
-            toast.success("Product Added Successfully!");
+            toast.success("Product Added Successfully!", {
+                position: "top-right",
+                autoClose: 3000,
+            });
         } catch (error) {
             console.error('Error adding product:', error);
-            toast.error('Failed to add product.');
+            toast.error('Failed to add product.', {
+                position: "top-right",
+                autoClose: 3000,
+            });
         }
     };
+    
 
     const imagePath = `${process.env.PUBLIC_URL}${product.image}`;
 
@@ -33,8 +39,7 @@ const ProductCard = ({ product }) => {
                 ))}
             </div>
             <div className="add-to-cart" onClick={handleAddToCart}>
-                <span>+</span>
-                <span>Add to cart</span>
+                Add to Cart
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import EmptyCart from '../../assets/staticImages/emptyCart.png';
@@ -11,38 +11,70 @@ const Cart = () => {
   const cart = useSelector(state => state.cart);
   const dispatch = useDispatch();
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     try {
       const { data } = await axios.get('https://localhost:7256/api/cart/cartitems');
       dispatch(asyncSetCart(data));
     } catch (error) {
       console.error('Failed to fetch cart:', error);
     }
-  };
-  
+  }, [dispatch]);
 
   useEffect(() => {
     fetchCart();
-  }, [dispatch]);
+  }, [fetchCart]);
 
   const handleDecreaseQuantity = async (productId) => {
-    await dispatch(asyncDecreaseQuantity(productId));
-    await fetchCart();
-    toast.info("Quantity decreased!");
-  };
+    try {
+        await dispatch(asyncDecreaseQuantity(productId));
+        await fetchCart();
+        toast.info("Quantity decreased!", {
+            position: "top-right",
+            autoClose: 3000,
+        });
+    } catch (error) {
+        console.error('Error decreasing quantity:', error);
+        toast.error('Failed to decrease quantity.', {
+            position: "top-right",
+            autoClose: 3000,
+        });
+    }
+};
 
-  const handleIncreaseQuantity = async (productId) => {
-    await dispatch(asyncIncreaseQuantity(productId));
-    await fetchCart();
-    toast.info("Quantity increased!");
-  };
+const handleIncreaseQuantity = async (productId) => {
+    try {
+        await dispatch(asyncIncreaseQuantity(productId));
+        await fetchCart();
+        toast.info("Quantity increased!", {
+            position: "top-right",
+            autoClose: 3000,
+        });
+    } catch (error) {
+        console.error('Error increasing quantity:', error);
+        toast.error('Failed to increase quantity.', {
+            position: "top-right",
+            autoClose: 3000,
+        });
+    }
+};
 
-  const handleRemoveFromCart = async (productId) => {
-    console.log('Removing product with id:', productId);
-    await dispatch(asyncRemoveFromCart(productId));
-    await fetchCart();
-    toast.error("Product removed from cart!");
-  };
+const handleRemoveFromCart = async (productId) => {
+    try {
+        await dispatch(asyncRemoveFromCart(productId));
+        await fetchCart();
+        toast.error("Product removed from cart!", {
+            position: "top-right",
+            autoClose: 3000,
+        });
+    } catch (error) {
+        console.error('Error removing product:', error);
+        toast.error('Failed to remove product.', {
+            position: "top-right",
+            autoClose: 3000,
+        });
+    }
+};
+
 
   return (
     <div className="cart-container">

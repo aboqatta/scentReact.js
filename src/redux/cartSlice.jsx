@@ -73,29 +73,40 @@ const cartSlice = createSlice({
 
 export const { addToCart, removeFromCart, increaseQuantity, decreaseQuantity, setCart } = cartSlice.actions;
 
-const handleRequest = async (url, dispatch, action, method = 'POST') => {
+export const asyncAddToCart = (product) => async (dispatch) => {
   try {
-    await axios({ method, url });
-    dispatch(action());
+    await axios.post(`https://localhost:7256/api/cart/addtocart?productId=${product.id}`);
+    dispatch(addToCart(product));
   } catch (error) {
-    console.error(`Failed to process request: ${error.message}`);
+    console.error(`Failed to add to cart: ${error.message}`);
   }
 };
 
-export const asyncAddToCart = (product) => async (dispatch) => {
-  handleRequest(`https://localhost:7256/api/cart/addtocart?productId=${product.id}`, dispatch, () => addToCart(product));
-};
-
 export const asyncRemoveFromCart = (productId) => async (dispatch) => {
-  handleRequest(`https://localhost:7256/api/cart/removefromcart?productId=${productId}`, dispatch, () => removeFromCart(productId), 'DELETE');
+  try {
+    await axios.delete(`https://localhost:7256/api/cart/removefromcart?productId=${productId}`);
+    dispatch(removeFromCart(productId));
+  } catch (error) {
+    console.error(`Failed to remove from cart: ${error.message}`);
+  }
 };
 
 export const asyncIncreaseQuantity = (productId) => async (dispatch) => {
-  handleRequest(`https://localhost:7256/api/cart/increasequantity?productId=${productId}`, dispatch, () => increaseQuantity(productId));
+  try {
+    await axios.post(`https://localhost:7256/api/cart/increasequantity?productId=${productId}`);
+    dispatch(increaseQuantity(productId));
+  } catch (error) {
+    console.error(`Failed to increase quantity: ${error.message}`);
+  }
 };
 
 export const asyncDecreaseQuantity = (productId) => async (dispatch) => {
-  handleRequest(`https://localhost:7256/api/cart/decreasequantity?productId=${productId}`, dispatch, () => decreaseQuantity(productId));
+  try {
+    await axios.post(`https://localhost:7256/api/cart/decreasequantity?productId=${productId}`);
+    dispatch(decreaseQuantity(productId));
+  } catch (error) {
+    console.error(`Failed to decrease quantity: ${error.message}`);
+  }
 };
 
 export const asyncSetCart = (cartData) => async (dispatch) => {
